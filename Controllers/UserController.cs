@@ -7,17 +7,18 @@ namespace my_simple_web_api.Controllers;
 [Route("api/user")]
 public class UserController : ControllerBase
 {
-    private readonly MySimpleDatabaseClient _mySimpleDatabaseClient;
+    private readonly MySimpleDatabaseClient<Row> _mySimpleDatabaseClient;
 
-    public UserController(MySimpleDatabaseClient mySimpleDatabaseClient)
+    public UserController(MySimpleDatabaseClient<Row> mySimpleDatabaseClient)
     {
         _mySimpleDatabaseClient = mySimpleDatabaseClient;
     }
 
     [HttpGet]
     [Route("all")]
-    public void GetAllUsers()
+    public async Task<ActionResult> GetAllUsers()
     {
-        _mySimpleDatabaseClient.IssueSelectCommand("select");
+        var rows = await _mySimpleDatabaseClient.IssueSelectCommand("select");
+        return Ok(rows);
     }
 }

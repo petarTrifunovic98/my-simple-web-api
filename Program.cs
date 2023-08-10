@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var dbClient = new MySimpleDatabaseClient("localhost", 9988);
+var dbClient = new MySimpleDatabaseClient<Row>("localhost", 9988);
 builder.Services.AddSingleton(dbClient);
 
 var app = builder.Build();
