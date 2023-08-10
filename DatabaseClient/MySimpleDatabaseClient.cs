@@ -7,7 +7,7 @@ using System.Text.Json.Nodes;
 
 namespace my_simple_web_api.DatabaseClient;
 
-public class MySimpleDatabaseClient
+public class MySimpleDatabaseClient<T>
 {
 
     private readonly Socket _client;
@@ -23,7 +23,7 @@ public class MySimpleDatabaseClient
     }
 
 
-    public async void IssueSelectCommand(string command) 
+    public async Task<IEnumerable<T>> IssueSelectCommand(string command) 
     {
         var commandBytes = Encoding.UTF8.GetBytes(command);
         await _client.SendAsync(commandBytes, SocketFlags.None);
@@ -38,9 +38,11 @@ public class MySimpleDatabaseClient
             Console.WriteLine($"Socket client received: \"{response}\"");
             // var jsonObject = JsonNode.Parse(response);
             // Console.WriteLine(jsonObject.ToString());
-            var list = JsonSerializer.Deserialize<List<Row>>(response);
+            var list = JsonSerializer.Deserialize<List<T>>(response);
             list.ForEach(el => Console.WriteLine(el));
+            return list;
         }
+        return null;
         Console.WriteLine("Ending...");
     }
 }
