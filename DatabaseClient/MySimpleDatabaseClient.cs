@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace my_simple_web_api.DatabaseClient;
 
@@ -28,12 +30,16 @@ public class MySimpleDatabaseClient
         Console.WriteLine($"Socket client sent message: \"{command}\"");
 
         var response = "";
-        while (response.Length < 3 || !response.EndsWith("end\n")) {
-            var buffer = new byte[1024];
+        while (response.Length < 3 ) {
+            var buffer = new byte[10000];
             var received = await _client.ReceiveAsync(buffer, SocketFlags.None);
             // var received = _client.Receive(buffer, SocketFlags.None);
             response = Encoding.UTF8.GetString(buffer, 0, received);
             Console.WriteLine($"Socket client received: \"{response}\"");
+            // var jsonObject = JsonNode.Parse(response);
+            // Console.WriteLine(jsonObject.ToString());
+            var list = JsonSerializer.Deserialize<List<Row>>(response);
+            list.ForEach(el => Console.WriteLine(el));
         }
         Console.WriteLine("Ending...");
     }
