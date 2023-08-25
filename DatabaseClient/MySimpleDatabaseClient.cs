@@ -23,26 +23,51 @@ public class MySimpleDatabaseClient<T>
     }
 
 
-    public async Task<IEnumerable<T>> IssueSelectCommand(string command) 
+    public async Task<IEnumerable<T>> IssueSelectCommand(string command)
     {
         var commandBytes = Encoding.UTF8.GetBytes(command);
         await _client.SendAsync(commandBytes, SocketFlags.None);
         Console.WriteLine($"Socket client sent message: \"{command}\"");
 
         var response = "";
-        while (response.Length < 3 ) {
+        while (response.Length < 3)
+        {
             var buffer = new byte[10000];
             var received = await _client.ReceiveAsync(buffer, SocketFlags.None);
-            // var received = _client.Receive(buffer, SocketFlags.None);
             response = Encoding.UTF8.GetString(buffer, 0, received);
             Console.WriteLine($"Socket client received: \"{response}\"");
-            // var jsonObject = JsonNode.Parse(response);
-            // Console.WriteLine(jsonObject.ToString());
             var list = JsonSerializer.Deserialize<List<T>>(response);
             list.ForEach(el => Console.WriteLine(el));
             return list;
         }
         return null;
-        Console.WriteLine("Ending...");
+    }
+
+    public async Task<T> IssueSelectOneCommand(string command)
+    {
+        var commandBytes = Encoding.UTF8.GetBytes(command);
+        await _client.SendAsync(commandBytes, SocketFlags.None);
+        Console.WriteLine($"Socket client sent message: \"{command}\"");
+
+        var response = "";
+        var buffer = new byte[10000];
+        var received = await _client.ReceiveAsync(buffer, SocketFlags.None);
+        response = Encoding.UTF8.GetString(buffer, 0, received);
+        Console.WriteLine($"Socket client received: \"{response}\"");
+        var result = JsonSerializer.Deserialize<T>(response);
+        Console.WriteLine(result);
+        return result;
+    }
+
+    public async Task IssueInsertCommand(string command)
+    {
+        var commandBytes = Encoding.UTF8.GetBytes(command);
+        await _client.SendAsync(commandBytes, SocketFlags.None);
+        Console.WriteLine($"Socket client sent message: \"{command}\"");
+    }
+
+    public async Task nesto(int asd) {
+        var petar = "aaaa";
+        
     }
 }
