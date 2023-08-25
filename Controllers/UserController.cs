@@ -21,4 +21,21 @@ public class UserController : ControllerBase
         var rows = await _mySimpleDatabaseClient.IssueSelectCommand("select");
         return Ok(rows);
     }
+
+    [HttpGet]
+    [Route("{userId}")]
+    public async Task<ActionResult> GetUser(int userId)
+    {
+        var user = await _mySimpleDatabaseClient.IssueSelectOneCommand("selectOne " + userId.ToString());
+        return Ok(user);
+    }
+
+    [HttpPost]
+    [Route("add-user")]
+    public async Task<ActionResult> AddUser([FromBody] Row user) 
+    {
+        var addUserCommand = "insert " + user.id + " " + user.username + " " + user.email;
+        await _mySimpleDatabaseClient.IssueInsertCommand(addUserCommand);
+        return Ok(); 
+    }
 }
