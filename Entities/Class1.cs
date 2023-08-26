@@ -1,4 +1,4 @@
-﻿namespace LoggerService;
+﻿namespace Entities;
 public class Class1
 {
 

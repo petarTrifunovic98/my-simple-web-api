@@ -1,4 +1,5 @@
 using Contracts;
+using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using my_simple_web_api.DatabaseClient;
 
@@ -8,10 +9,10 @@ namespace my_simple_web_api.Controllers;
 [Route("api/user")]
 public class UserController : ControllerBase
 {
-    private readonly MySimpleDatabaseClient<Row> _mySimpleDatabaseClient;
+    private readonly MySimpleDatabaseClient<User> _mySimpleDatabaseClient;
     private readonly ILoggerManager _logger;
 
-    public UserController(MySimpleDatabaseClient<Row> mySimpleDatabaseClient, ILoggerManager logger)
+    public UserController(MySimpleDatabaseClient<User> mySimpleDatabaseClient, ILoggerManager logger)
     {
         _mySimpleDatabaseClient = mySimpleDatabaseClient;
         _logger = logger;
@@ -40,7 +41,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("add-user")]
-    public async Task<ActionResult> AddUser([FromBody] Row user)
+    public async Task<ActionResult> AddUser([FromBody] User user)
     {
         var addUserCommand = "insert " + user.id + " " + user.username + " " + user.email;
         await _mySimpleDatabaseClient.IssueInsertCommand(addUserCommand);
