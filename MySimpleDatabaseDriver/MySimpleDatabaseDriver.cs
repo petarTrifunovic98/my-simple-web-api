@@ -1,13 +1,13 @@
 
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
-namespace my_simple_web_api.DatabaseClient;
+namespace MySimpleDatabaseDriver;
 
-public class MySimpleDatabaseClient<T>
+public class MySimpleDatabaseClient
 {
 
     private readonly Socket _client;
@@ -23,8 +23,9 @@ public class MySimpleDatabaseClient<T>
     }
 
 
-    public async Task<IEnumerable<T>> IssueSelectCommand(string command)
+    public async Task<IEnumerable<T>> IssueSelectCommand<T>()
     {
+        var command = "select";
         var commandBytes = Encoding.UTF8.GetBytes(command);
         await _client.SendAsync(commandBytes, SocketFlags.None);
         Console.WriteLine($"Socket client sent message: \"{command}\"");
@@ -43,8 +44,9 @@ public class MySimpleDatabaseClient<T>
         return null;
     }
 
-    public async Task<T> IssueSelectOneCommand(string command)
+    public async Task<T> IssueSelectOneCommand<T>(object id)
     {
+        var command = "selectOne " + id.ToString();
         var commandBytes = Encoding.UTF8.GetBytes(command);
         await _client.SendAsync(commandBytes, SocketFlags.None);
         Console.WriteLine($"Socket client sent message: \"{command}\"");
@@ -59,15 +61,17 @@ public class MySimpleDatabaseClient<T>
         return result;
     }
 
-    public async Task IssueInsertCommand(string command)
+    public async Task IssueInsertCommand<T>(T entity)
     {
+        var command = "insert";
+        Type t = entity.GetType();
+        foreach (PropertyInfo pi in t.GetProperties())
+        {
+            command += " ";
+            command += pi.GetValue(entity);
+        }
         var commandBytes = Encoding.UTF8.GetBytes(command);
         await _client.SendAsync(commandBytes, SocketFlags.None);
         Console.WriteLine($"Socket client sent message: \"{command}\"");
-    }
-
-    public async Task nesto(int asd) {
-        var petar = "aaaa";
-        
     }
 }

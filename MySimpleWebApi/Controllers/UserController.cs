@@ -1,7 +1,7 @@
 using Contracts;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
-using my_simple_web_api.DatabaseClient;
+using MySimpleDatabaseDriver;
 
 namespace my_simple_web_api.Controllers;
 
@@ -9,12 +9,12 @@ namespace my_simple_web_api.Controllers;
 [Route("api/user")]
 public class UserController : ControllerBase
 {
-    private readonly MySimpleDatabaseClient<User> _mySimpleDatabaseClient;
+    private readonly IRepositoryWrapper _repository;
     private readonly ILoggerManager _logger;
 
-    public UserController(MySimpleDatabaseClient<User> mySimpleDatabaseClient, ILoggerManager logger)
+    public UserController(IRepositoryWrapper repository, ILoggerManager logger)
     {
-        _mySimpleDatabaseClient = mySimpleDatabaseClient;
+        _repository = repository;
         _logger = logger;
     }
 
@@ -22,20 +22,15 @@ public class UserController : ControllerBase
     [Route("all")]
     public async Task<ActionResult> GetAllUsers()
     {
-        _logger.LogInfo("Here is info message from the controller.");
-        _logger.LogDebug("Here is debug message from the controller.");
-        _logger.LogWarn("Here is warn message from the controller.");
-        _logger.LogError("Here is error message from the controller.");
-
-        var rows = await _mySimpleDatabaseClient.IssueSelectCommand("select");
-        return Ok(rows);
+        var users = await _repository.UserRepository.FindAll();
+        return Ok(users);
     }
 
     [HttpGet]
     [Route("{userId}")]
     public async Task<ActionResult> GetUser(int userId)
     {
-        var user = await _mySimpleDatabaseClient.IssueSelectOneCommand("selectOne " + userId.ToString());
+        var user = await _repository.UserRepository.FindByID(userId);
         return Ok(user);
     }
 
@@ -43,8 +38,7 @@ public class UserController : ControllerBase
     [Route("add-user")]
     public async Task<ActionResult> AddUser([FromBody] User user)
     {
-        var addUserCommand = "insert " + user.id + " " + user.username + " " + user.email;
-        await _mySimpleDatabaseClient.IssueInsertCommand(addUserCommand);
+        await _repository.UserRepository.Create(user);
         return Ok();
     }
 }
