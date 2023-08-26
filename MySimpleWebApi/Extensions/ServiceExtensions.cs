@@ -1,3 +1,6 @@
+using Contracts;
+using LoggerService;
+
 namespace my_simple_web_api.Extensions
 {
     public static class ServiceExtensions
@@ -19,6 +22,11 @@ namespace my_simple_web_api.Extensions
             {
 
             });
+        }
+
+        public static void ConfigureLoggerService(this IServiceCollection services)
+        {
+            services.AddSingleton<ILoggerManager, LoggerManager>();
         }
     }
 }
