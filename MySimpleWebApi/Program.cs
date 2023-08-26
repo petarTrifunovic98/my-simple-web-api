@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.HttpOverrides;
-using my_simple_web_api.DatabaseClient;
 using my_simple_web_api.Extensions;
 using NLog;
 
@@ -13,6 +12,7 @@ builder.Services.ConfigureCors();
 builder.Services.ConfigureIISIntegration();
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureMySimpleDatabaseConnection(builder.Configuration);
+builder.Services.ConfigureRepositoryWrapper();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
