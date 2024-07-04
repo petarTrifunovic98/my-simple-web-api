@@ -38,6 +38,7 @@ public class MySimpleDatabaseClient
             response = Encoding.UTF8.GetString(buffer, 0, received);
             Console.WriteLine($"Socket client received: \"{response}\"");
             var list = JsonSerializer.Deserialize<List<T>>(response);
+            Console.WriteLine(list);
             list.ForEach(el => Console.WriteLine(el));
             return list;
         }
